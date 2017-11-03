@@ -1,0 +1,12 @@
+{
+  "name": "js-utils",
+  "version": "0.1.0",
+  "description": "It's the junk drawer of NodeJS code.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mark Eschbach <meschbach@gmail.com>",
+  "license": "MIT",
+  "dependencies": {}
+}
