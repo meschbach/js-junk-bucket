@@ -1,9 +1,9 @@
 
-function main( perform, name ) {
+function main( perform, logger ) {
 	perform()
 		.then(
 			() => {},
-			( problem ) => {}
+			( problem ) => { logger.error( "Error: ", problem) }
 		)
 }
 
