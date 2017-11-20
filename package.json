@@ -8,5 +8,7 @@
   },
   "author": "Mark Eschbach <meschbach@gmail.com>",
   "license": "MIT",
-  "dependencies": {}
+  "peerDependencies": {
+    "nano": ">=6"
+  }
 }
