@@ -52,6 +52,30 @@ class Database {
 	view( design, name, params ){
 		return es6_node( ( cb  ) => this.client.view( design, name, params, cb ) )
 	}
+
+	/**
+	 * Retrieves the given document by ID, then modifies the document, then writes the document back.
+	 *
+	 * @param id {String} the ID of the document to be modified
+	 * @param modfiied { function( originalDocument ) = Promise} a function to promise a modified document
+	 * @return a promise to update the given document
+	 */
+	async update_by_id( id, modifier ){
+		const document = await this.get_by_id( id );
+		const modified = await modifier( document )
+		return await this.insert( modified )
+	}
+
+	async upsert( id, generator, updater ){
+			const document = await this.get_by_id( id )
+			if( document ){
+				const modified = await updater( document )
+				return await this.insert(modified)
+			} else {
+				const newDoc = await generator()
+				return await this.insert(newDoc)
+			}
+	}
 }
 
 exports.Service = Service
