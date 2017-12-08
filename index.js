@@ -16,7 +16,7 @@ function es6_node( perform ) {
 	})
 }
 
-function main( perform, logger ) {
+function main( perform, logger = console ) {
 	perform()
 		.then(
 			() => {},
