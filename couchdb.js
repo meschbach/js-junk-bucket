@@ -36,6 +36,19 @@ class Database {
 		return es6_node( ( cb ) => this.client.get( id, params, cb ) )
 	}
 
+	maybe_by_id( id, params ){
+		return es6_node( ( cb ) => {
+			this.client.get( id, params, ( err, data ) => {
+				if( err ) {
+					if( err.statusCode == 404 ) { return cb( null, null ) }
+					return cb( err )
+				} else {
+					return cb( err, data )
+				}
+			})
+		})
+	}
+
 	view( design, name, params ){
 		return es6_node( ( cb  ) => this.client.view( design, name, params, cb ) )
 	}
