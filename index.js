@@ -17,7 +17,7 @@ function es6_node( perform ) {
 }
 
 function main( perform, logger = console ) {
-	perform()
+	perform( logger )
 		.then(
 			() => {},
 			( problem ) => { logger.error( "Error: ", problem) }
