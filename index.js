@@ -24,5 +24,13 @@ function main( perform, logger = console ) {
 		)
 }
 
+/**
+ * Does nothing, literally nothing.
+ */
+function nope() {
+
+}
+
 exports.main = main
 exports.es6_node = es6_node
+exports.nope = nope
