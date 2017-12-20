@@ -1,14 +1,17 @@
 {
   "name": "junk-drawer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "It's the junk drawer of NodeJS code.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha tests"
   },
   "author": "Mark Eschbach <meschbach@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
     "nano": ">=6"
+  },
+  "devDependencies": {
+    "mocha": "4.0.1"
   }
 }
