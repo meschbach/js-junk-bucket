@@ -26,10 +26,10 @@ function async_handler( future ) {
 function express_async( router ){
 	router.a_get = function( path, handler ){
 		app.get( path, async_handler(handler))
-	}
+	};
 	router.a_post = function( path, handler ){
 		app.post( path, async_handler( handler ) )
-	}
+	};
 	return router
 }
 
@@ -40,8 +40,8 @@ function express_async( router ){
  */
 function standard_responses( response ) {
 	function express_response( status, message ) {
-		response.status( status, message )
-		response.end()
+		response.status( status, message );
+		response.end();
 	}
 
 	function gen( status ) {
@@ -50,13 +50,12 @@ function standard_responses( response ) {
 		}
 	}
 
-	response.client_error = gen( 400 )
-	response.conflict = gen( 409 )
-	response.forbidden = gen( 500 )
+	response.client_error = gen( 400 );
+	response.conflict = gen( 409 );
+	response.forbidden = gen( 500 );
 }
 
 module.exports = {
 	make_async: express_async,
 	responses: standard_responses
-}
-
+};
