@@ -56,7 +56,7 @@ function standard_responses( response ) {
 }
 
 module.exports = {
-	make_async: express_async
+	make_async: express_async,
 	responses: standard_responses
 }
 
