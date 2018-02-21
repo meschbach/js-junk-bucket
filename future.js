@@ -3,7 +3,7 @@
  */
 
 /**
- * A syncrhonization point for resolving a value at some point in the future through discontinious flows.  For example,
+ * A synchronization point for resolving a value at some point in the future through discontinuous flows.  For example,
  * an RPC request to a remote service.
  */
 class Future {
