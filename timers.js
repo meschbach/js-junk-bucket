@@ -1,3 +1,4 @@
+const Future = require('./future')
 
 class LogicalTimerAlarm {
 	constructor( when, perform ){
@@ -43,8 +44,29 @@ class LogicalTimer {
 
 	//Client
 	notifyIn( terms, alarm ){
+		if( terms === undefined ){ throw new Error("Terms must be defined"); }
 		const targetTerm = this.term + terms;
-		this.notifications.push(new LogicalTimerAlarm(targetTerm, alarm));
+		const token = new LogicalTimerAlarm(targetTerm, alarm);
+		this.notifications.push( token );
+		return token;
+	}
+
+	cancel( alarm ){
+		alarm.cancel();
+		this.notifications = this.notifications.filter( item => item != alarm );
+	}
+
+	promiseIn( terms, what ) {
+		const result = new Future();
+		this.notifyIn( terms, () => {
+			try {
+				const output = what();
+				result.accept( output );
+			}catch(e){
+				result.reject( e );
+			}
+		});
+		return result.promised;
 	}
 }
 
