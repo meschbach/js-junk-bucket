@@ -43,6 +43,8 @@ function nope() {
 
 }
 
-exports.main = main
-exports.es6_node = es6_node
-exports.nope = nope
+module.exports = {
+	main,
+	es6_node,
+	nope
+};
