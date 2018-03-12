@@ -62,4 +62,13 @@ class Future {
 	}
 }
 
+function delay( forMilliseconds, value ) {
+	const future = new Future()
+	setTimeout( () => {
+		future.accept( value )
+	}, forMilliseconds )
+	return future.promised;
+}
+
 module.exports = Future
+module.exports.delay = delay
