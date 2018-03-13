@@ -1,4 +1,5 @@
 const Future = require('./future')
+const assert = require('assert')
 
 class LogicalTimerAlarm {
 	constructor( when, perform ){
@@ -52,7 +53,6 @@ class LogicalTimer {
 	}
 
 	cancel( alarm ){
-		alarm.cancel();
 		this.notifications = this.notifications.filter( item => item != alarm );
 	}
 
@@ -70,4 +70,34 @@ class LogicalTimer {
 	}
 }
 
+class WatchDog {
+	constructor( period, expiration, clock ) {
+		assert( clock );
+		this.clock = clock;
+		this.period = period;
+		this.expiration = expiration;
+		this._set();
+	}
+
+	_set(){
+		this.alarm = this.clock.notifyIn( this.period, () => {
+			this._periodElapsed()
+		});
+	}
+
+	_periodElapsed(){
+		this.expiration();
+	}
+
+	reset(){
+		this.clock.cancel( this.alarm );
+		this._set()
+	}
+
+	end() {
+		this.clock.cancel( this.alarm );
+	}
+}
+
 module.exports.LogicalTimer = LogicalTimer
+module.exports.WatchDog = WatchDog
