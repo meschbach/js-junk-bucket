@@ -45,6 +45,9 @@ describe( "WatchDog", function () {
 			it_is_untripped()
 
 			describe("when original period elapses", function () {
+				beforeEach(function () {
+					this.timer.advance(1);
+				})
 				it_is_untripped()
 			})
 
