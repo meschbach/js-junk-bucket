@@ -99,5 +99,36 @@ class WatchDog {
 	}
 }
 
-module.exports.LogicalTimer = LogicalTimer
-module.exports.WatchDog = WatchDog
+class NodeTimer {
+	constructor() {}
+	notifyIn( ms, alarm ){
+		assert(ms, "ms must be defined");
+		const token = setTimeout(alarm, ms);
+		return token;
+	}
+
+	cancel( alarm ){
+		cancelTimeout(alarm);
+	}
+
+	promiseIn( terms, what ) {
+		const result = new Future();
+		this.notifyIn( terms, () => {
+			try {
+				const output = what();
+				result.accept( output );
+			}catch(e){
+				result.reject( e );
+			}
+		});
+		return result.promised;
+	}
+}
+
+const defaultNodeTimer = new NodeTimer();
+module.exports = {
+	defaultNodeTimer,
+	defaultTimer: defaultNodeTimer,
+	LogicalTimer,
+	WatchDog
+}
