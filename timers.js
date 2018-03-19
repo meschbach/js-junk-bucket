@@ -24,9 +24,9 @@ class LogicalTimer {
 
 	//Move forward
 	advance( terms = 1 ){
-		while( terms >  0 ){
+		while( terms > 0 ){
 			terms--;
-			this.term = this.term + 1;
+			this.term++;
 			const {past,remaining} = this.notifications.reduce( (divide, alarm) => {
 				if( alarm.check( this.term )) {
 					divide.past.push( alarm )
@@ -122,6 +122,14 @@ class NodeTimer {
 			}
 		});
 		return result.promised;
+	}
+
+	promiseNextTick( value ) {
+		const gate = new Future();
+		process.nextTick( () => {
+			gate.accept( value );
+		} )
+		return gate.promised;
 	}
 }
 

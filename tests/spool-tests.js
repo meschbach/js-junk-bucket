@@ -2,7 +2,8 @@ const mocha = require("mocha")
 const assert = require("assert")
 
 const Future = require("../future")
-const {LogicalTimer, WatchDog} = require("../timers")
+const {Sequence} = require('../sequence')
+const {LogicalTimer, WatchDog, defaultNodeTimer} = require("../timers")
 
 class BufferingConsumer {
 	constructor( ) {
@@ -18,39 +19,6 @@ class BufferingConsumer {
 	}
 }
 
-class Sequence {
-	constructor() {
-		const when = new Future()
-		when.accept(true);
-		this.last_op = when.promised;
-	}
-
-	next( perform ){
-		const operation = this.last_op.then(( input ) => {
-			return perform( input )
-		});
-		this.last_op = operation;
-		return operation;
-	}
-
-	within_otherwise( timeframe, perform, fail, clock ) {
-		let canceled = false;
-		let waiting = true;
-		const token = clock.notifyIn(timeframe, () =>{
-			if( waiting ) {
-				canceled = true;
-				fail()
-			}
-		})
-		this.next( (input) => {
-			if( canceled ){ return input; }
-			waiting = false;
-			clock.cancel(token)
-			return perform( input )
-		});
-	}
-}
-
 class DelayedConsumer {
 	/**
 	 *
@@ -58,21 +26,19 @@ class DelayedConsumer {
 	 * @param clock timer to utilize for alarms (defaults to Node clock)
 	 */
 	constructor( completeAfter, clock) {
+		assert(clock, "clock");
+
 		this.messages = [];
 		this.completeAfter = completeAfter;
 		this.clock = clock;
-		const when = new Future()
-		when.accept(true);
-		this.last_op = when.promised;
+		this.ops = new Sequence(true);
 		this.ended = false;
 	}
 
 	_next_operation( perform ) {
-		const operation = this.last_op.then(() => {
-			return this.clock.notifyIn(this.completeAfter, perform);
+		return this.ops.next( () => {
+			return this.clock.promiseIn( this.completeAfter, perform );
 		});
-		this.last_op = operation;
-		return operation;
 	}
 
 	consume( message ){
@@ -96,20 +62,34 @@ class BufferingStorage {
 	store(message){
 		this.waiting.push(message)
 	}
+
+	hasMessages( ){
+		return this.waiting.length > 0;
+	}
+
+	retreive() {
+		return this.waiting.splice(0,1)[0]
+	}
 }
 
 class Spool {
-	constructor( consumerFactory, consumerExpiry = 5, storage, clock ) {
+	constructor( consumerFactory, consumerExpiry = 5, delayTolerance = 5, storage, clock ) {
 		assert(clock, "clock");
 		assert(storage, "storage");
 		assert(consumerFactory, "consumer factory");
 		this.consumerFactory = consumerFactory;
+		//if the consumer is without data for this long, then terminate it
 		this.consumerExpiry = consumerExpiry;
+		this.delayTolerance = delayTolerance;
 		this.clock = clock;
 		this.storage = storage;
+
+		this.consumerSequence = new Sequence()
+		this.ended = false;
 	}
 
 	publish( message ) {
+		assert(!this.ended, "ended")
 		/*
 		 * Create the consumer
 		 */
@@ -127,7 +107,28 @@ class Spool {
 		/*
 		 * Send the message to the consumer
 		 */
-		this.consumer.consume( message )
+		return this.consumerSequence.within_otherwise( this.delayTolerance, async () => {
+			return await this.consumer.consume(message)
+		}, async () => {
+			await this.storage.store(message)
+
+			return this.consumerSequence.next( async () => {
+				while(this.storage.hasMessages()){
+					const storedMessage = await this.storage.retreive();
+					if( storedMessage ){
+						await this.publish( storedMessage )
+					}else {
+						//do thing, we're done
+					}
+				}
+			});
+		}, this.clock )
+	}
+
+	end() {
+		this.ended = true;
+		if( this.consumer ){ this.consumer.end() }
+		if( this.consumerWatch ){ this.clock.cancel(this.consumerWatch); }
 	}
 }
 
@@ -142,7 +143,7 @@ describe( "Spool", function() {
 			this.lastConsumer = new BufferingConsumer();
 			return this.lastConsumer;
 		}
-		this.spool = new Spool( this.consumerFactory, this.consumerExpiry, new BufferingStorage(), this.logicalClock );
+		this.spool = new Spool( this.consumerFactory, this.consumerExpiry, 1000, new BufferingStorage(), this.logicalClock );
 	});
 
 	function it_has_consumer_count(count, message) {
@@ -154,9 +155,9 @@ describe( "Spool", function() {
 	it_has_consumer_count(0, "doesn't immediately create a consumer")
 
 	describe("when first message is published", function() {
-		beforeEach( function() {
+		beforeEach( async function() {
 			this.message = "damage";
-			this.spool.publish( this.message );
+			return this.spool.publish( this.message );
 		});
 
 		it_has_consumer_count(1, "creates a new consumer")
@@ -164,9 +165,9 @@ describe( "Spool", function() {
 
 		describe("before the consumer timeout", function(){
 			describe("when sent a second message", function(){
-				beforeEach(function(){
+				beforeEach(async function(){
 					this.second = "make it on our own"
-					this.spool.publish(this.second);
+					return this.spool.publish(this.second);
 				})
 
 				it_has_consumer_count(1, "reuses the old consumer")
@@ -182,9 +183,9 @@ describe( "Spool", function() {
 			});
 
 			describe('when sending a second message', function () {
-				beforeEach(function () {
+				beforeEach(async function () {
 					this.secondMessage = "Wisemen say life is suffering"
-					this.spool.publish(this.secondMessage)
+					await this.spool.publish(this.secondMessage)
 				});
 
 				it_has_consumer_count(2, "creates a new consumer")
@@ -196,21 +197,22 @@ describe( "Spool", function() {
 		});
 	});
 
-	xdescribe('when a message is published while another is sending', function () {
+	describe('when a message is published while another is sending', function () {
 		beforeEach( function() {
-			this.consumerExpiry = 10;
+			this.consumerExpiry = 100;
 			this.transmissionWait = 5;
+			this.consumerWait = 15;
 
 			this.logicalClock = new LogicalTimer();
 			this.lastConsumer = null;
 			this.consumerFactoryCount = 0;
 			this.consumerFactory = () => {
 				this.consumerFactoryCount++;
-				this.lastConsumer = new DelayedConsumer();
+				this.lastConsumer = new DelayedConsumer( this.consumerWait, this.logicalClock );
 				return this.lastConsumer;
 			}
 			this.storage = new BufferingStorage()
-			this.spool = new Spool( this.consumerFactory, this.consumerExpiry, this.storage, this.logicalClock );
+			this.spool = new Spool( this.consumerFactory, this.consumerExpiry, this.transmissionWait, this.storage, this.logicalClock );
 
 			this.firstMessage = Symbol('first')
 			this.secondMessage = Symbol('second')
@@ -218,22 +220,28 @@ describe( "Spool", function() {
 			this.spool.publish(this.secondMessage)
 		});
 
+		afterEach( function(){
+			this.spool.end();
+		})
+
 		describe('and the storage tolerance elapses', function () {
 			beforeEach(function () {
-				this.logicalClock.advance(this.transmissionWait)
+				this.logicalClock.advance(this.consumerWait)
 			})
 
-			it("sends the message to storage", function () {
+			it("sends the second message to storage", function () {
 				assert.deepEqual(this.storage.waiting, [this.secondMessage])
 			})
 
-			describe('when the message sends', function () {
-				it('sends the message from storage')
-			});
-		});
+			describe('when the first message sends', function () {
+				beforeEach(function () {
+					this.logicalClock.advance(this.consumerWait)
+				})
 
-		describe('and the send message completes', function () {
-			it('sends the message to the consumer')
+				it('sends the message from storage', function () {
+					assert.deepEqual(this.lastConsumer.messages, [this.firstMessage, this.secondMessage]);
+				})
+			});
 		});
 	});
 });
