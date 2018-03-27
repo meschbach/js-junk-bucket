@@ -25,12 +25,12 @@ function async_handler( future ) {
  */
 function express_async( router ){
 	router.a_get = function( path, handler ){
-		app.get( path, async_handler(handler))
+		router.get( path, async_handler(handler))
 	};
 	router.a_post = function( path, handler ){
-		app.post( path, async_handler( handler ) )
+		router.post( path, async_handler( handler ) )
 	};
-	return router
+	return router;
 }
 
 /**
