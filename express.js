@@ -7,12 +7,12 @@
  */
 function async_handler( future ) {
 	return function( req, resp ) {
-		standard_responses( resp )
+		standard_responses( resp );
 		future( req, resp ).then( () => {
 			//Do nothing right now
 		}, ( problem ) => {
-			console.error( "Encountered async error while handling request", problem )
-			server_error( resp )
+			console.error( "Encountered async error while handling request", problem );
+			resp.server_error("An unexpected condition was raised");
 		})
 	}
 }
@@ -57,8 +57,10 @@ function standard_responses( response ) {
 	}
 
 	response.client_error = gen( 400 );
+	response.unauthorized = gen( 401 );
+	response.forbidden = gen( 403 );
 	response.conflict = gen( 409 );
-	response.forbidden = gen( 500 );
+	response.server_error = gen( 500 );
 }
 
 module.exports = {
