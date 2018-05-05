@@ -30,6 +30,12 @@ function express_async( router ){
 	router.a_post = function( path, handler ){
 		router.post( path, async_handler( handler ) )
 	};
+	router.a_put = function( path, handler ){
+		router.put( path, async_handler( handler ) )
+	};
+	router.a_delete = function( path, handler ){
+		router.delete( path, async_handler( handler ) )
+	};
 	return router;
 }
 
