@@ -8,12 +8,22 @@
 function async_handler( future ) {
 	return function( req, resp ) {
 		standard_responses( resp );
-		future( req, resp ).then( () => {
-			//Do nothing right now
-		}, ( problem ) => {
-			console.error( "Encountered async error while handling request", problem );
-			resp.server_error("An unexpected condition was raised");
-		})
+
+		function log_error( problem ){
+			if( resp.headersSent ) {
+				console.error("Error occurred after headers sent.  Terminating response", problem );
+				resp.end();
+			} else {
+				console.error("Failed to properly process request", problem );
+				resp.server_error("An unexpected condition occurred.");
+			}
+		}
+
+		try {
+			future(req, resp).then(() => {}, log_error);
+		}catch (e) {
+			log_error(e);
+		}
 	}
 }
 
