@@ -63,12 +63,24 @@ class Future {
 }
 
 function delay( forMilliseconds, value ) {
-	const future = new Future()
+	const future = new Future();
 	setTimeout( () => {
 		future.accept( value )
-	}, forMilliseconds )
+	}, forMilliseconds );
 	return future.promised;
 }
 
-module.exports = Future
-module.exports.delay = delay
+function promiseEvent( from, name ){
+	const future = new Future();
+	from.once(name, (event) => {
+		future.accept(event);
+	});
+	from.once('error', (why) => {
+		future.reject(why);
+	});
+	return future.promised;
+}
+
+module.exports = Future;
+module.exports.delay = delay;
+module.exports.promiseEvent = promiseEvent;
