@@ -81,6 +81,34 @@ function promiseEvent( from, name ){
 	return future.promised;
 }
 
-module.exports = Future;
+async function parallel( promises ){
+	const resolutions = promises.map( ( p ) => {
+		return p.then( (value) => {
+			return {ok:true, value}
+		}, (problem) => {
+			return {ok:false, problem}
+		})
+	});
+	const results = await Promise.all( resolutions )
+	const out = results.reduce( ( output, result ) => {
+		if( result.ok ){
+			output.good.push(result.value);
+		} else {
+			output.bad.push(result.problem);
+		}
+		return output;
+	}, { good: [], bad: [] });
+
+	if( out.bad.length > 0 ){
+		const error = new Error("Failed to resolves all promises");
+		error.good = out.good;
+		error.bad = out.bad;
+		throw error;
+	}
+	return out.good;
+}
+
+module.exports = Future
 module.exports.delay = delay;
 module.exports.promiseEvent = promiseEvent;
+module.exports.parallel = parallel;
