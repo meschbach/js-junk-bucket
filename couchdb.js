@@ -70,7 +70,7 @@ class Database {
 	 *
 	 * @param id the _id property of the database to be resolved
 	 * @param params optionally additional parameters to send the CouchDB during this operation
-	 * @return {Promise<*>) A promise to resolve the document or null if the document doesn't exist.
+	 * @return {Promise) A promise to resolve the document or null if the document doesn't exist.
 	 */
 	maybe_by_id( id, params ){
 		return es6_node( ( cb ) => {
@@ -119,6 +119,17 @@ class Database {
 				const newDoc = await generator()
 				return await this.insert(newDoc)
 			}
+	}
+
+	/**
+	 * Checks if a document with a given ID exists
+	 *
+	 * @param id {String} the _id of the document in question
+	 * @return true if the document exists, otherwise false
+	 */
+	async exists( id ){
+		const document = this.maybe_by_id(id);
+		return null == document;
 	}
 }
 
