@@ -1,7 +1,7 @@
 {
-  "name": "junk-drawer",
-  "version": "0.4.1",
-  "description": "It's the junk drawer of NodeJS code.",
+  "name": "junk-bucket",
+  "version": "1.0.0",
+  "description": "A bucket of code to maek NodeJS easier",
   "main": "index.js",
   "scripts": {
     "test": "mocha tests"
