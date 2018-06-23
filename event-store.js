@@ -94,7 +94,7 @@ class EventStore extends EventEmitter {
 	 * @param view a mechanism to process relevant events
 	 * @returns {Promise<void>}
 	 */
-	async materialized( filter, view, initialState ){
+	async materialized( filter, view ){
 		function feedEvent( envelope ){
 			if( filter( envelope ) ){
 				view( envelope );
