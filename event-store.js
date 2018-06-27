@@ -108,8 +108,17 @@ class EventStore extends EventEmitter {
 	}
 }
 
+function projector( filter, reducer, state ){
+	return function( event ){
+		if( filter( event )){
+			state = reducer( state, event );
+		}
+	}
+}
+
 module.exports = {
 	ClockDelayStore,
 	MemoryStore,
-	EventStore
+	EventStore,
+	projector
 };
