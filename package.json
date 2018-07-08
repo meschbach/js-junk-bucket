@@ -8,9 +8,6 @@
   },
   "author": "Mark Eschbach <meschbach@gmail.com>",
   "license": "MIT",
-  "peerDependencies": {
-    "nano": ">=6"
-  },
   "devDependencies": {
     "mocha": "4.0.1"
   },
