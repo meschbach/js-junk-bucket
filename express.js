@@ -1,3 +1,5 @@
+const {nope} = require("./index");
+
 /**
  * Adapts the standard ExpressJS calling convention to properly handle promises and properly documenting failure.  This
  * will also attach additional common response codes to the response.
@@ -20,7 +22,8 @@ function async_handler( future ) {
 		}
 
 		try {
-			future(req, resp).then(() => {}, log_error);
+			const result = future(req, resp);
+			Promise.resolve(result).then(nope, log_error )
 		}catch (e) {
 			log_error(e);
 		}
