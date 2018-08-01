@@ -72,6 +72,7 @@ function standard_responses( response ) {
 	response.client_error = gen( 400 );
 	response.unauthorized = gen( 401 );
 	response.forbidden = gen( 403 );
+	response.notFound = gen( 404 );
 	response.conflict = gen( 409 );
 	response.server_error = gen( 500 );
 }
