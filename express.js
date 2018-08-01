@@ -34,7 +34,7 @@ function async_handler( future ) {
  * Attaches convience methods to an express router to gracefully handle asyncrhonous resource routing
  *
  * @param router the router to be enhanced
- * @return {*} the rotuer
+ * @return {*} the router
  */
 function express_async( router ){
 	router.a_get = function( path, handler ){
