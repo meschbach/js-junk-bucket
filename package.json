@@ -11,5 +11,5 @@
   "devDependencies": {
     "mocha": "4.0.1"
   },
-  "repository": "meschbach/js-junk-drawer"
+  "repository": "meschbach/js-junk-bucket"
 }
