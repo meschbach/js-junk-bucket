@@ -7,16 +7,16 @@ const {nope} = require("./index");
  * @callback future a asyncrhonous function which is either resolves or errors.
  * @return {Function} an Express handler which will properly manage async futures.
  */
-function async_handler( future ) {
+function async_handler( future, logger ) {
 	return function( req, resp ) {
 		standard_responses( resp );
 
 		function log_error( problem ){
 			if( resp.headersSent ) {
-				console.error("Error occurred after headers sent.  Terminating response", problem );
+				logger.error("Error occurred after headers sent.  Terminating response", problem );
 				resp.end();
 			} else {
-				console.error("Failed to properly process request", problem );
+				logger.error("Failed to properly process request", problem );
 				resp.server_error("An unexpected condition occurred.");
 			}
 		}
@@ -36,18 +36,18 @@ function async_handler( future ) {
  * @param router the router to be enhanced
  * @return {*} the router
  */
-function express_async( router ){
+function express_async( router, logger = console ){
 	router.a_get = function( path, handler ){
-		router.get( path, async_handler(handler))
+		router.get( path, async_handler(handler, logger))
 	};
 	router.a_post = function( path, handler ){
-		router.post( path, async_handler( handler ) )
+		router.post( path, async_handler( handler, logger ) )
 	};
 	router.a_put = function( path, handler ){
-		router.put( path, async_handler( handler ) )
+		router.put( path, async_handler( handler, logger ) )
 	};
 	router.a_delete = function( path, handler ){
-		router.delete( path, async_handler( handler ) )
+		router.delete( path, async_handler( handler, logger ) )
 	};
 	return router;
 }
