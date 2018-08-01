@@ -37,6 +37,19 @@ class CommandDispatcher {
 	}
 }
 
+class Base36Namer {
+	constructor( start = 0 ) {
+		this.id = start;
+	}
+
+	next() {
+		const id = this.id;
+		this.id++;
+		return id.toString(36);
+	}
+}
+
 module.exports = {
-	CommandDispatcher
+	CommandDispatcher,
+	Base36Namer
 };

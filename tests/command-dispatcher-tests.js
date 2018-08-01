@@ -58,3 +58,17 @@ describe("CommandDispatch", function(){
 	});
 });
 
+const {Base36Namer} = require("../command-dispatcher");
+describe("Base36Namer", function(){
+	it("provides a string of the first value", function(){
+		const name = new Base36Namer();
+		const result = name.next();
+		expect(result).to.eq("0");
+	});
+
+	it("provides a string of the 37 value", function(){
+		const name = new Base36Namer(37);
+		const result = name.next();
+		expect(result).to.eq("11");
+	});
+});
