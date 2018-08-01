@@ -5,9 +5,9 @@
 const { nope } = require('./index')
 
 class CommandDispatcher {
-	constructor() {
+	constructor( defaultHandler = nope ) {
 		this.handlers = []
-		this.defaultHandler = nope
+		this.defaultHandler = defaultHandler
 	}
 
 	register( name, handler ) {
@@ -20,7 +20,7 @@ class CommandDispatcher {
 
 	dispatch( message, context ){
 		const targetName = message.command
-		const handler = this.handlers[name] || this.defaultHandler
+		const handler = this.handlers[targetName] || this.defaultHandler
 		handler( message, context )
 	}
 
@@ -31,4 +31,12 @@ class CommandDispatcher {
 		})
 		return name
 	}
+
+	reset(){
+		this.handlers = {};
+	}
 }
+
+module.exports = {
+	CommandDispatcher
+};

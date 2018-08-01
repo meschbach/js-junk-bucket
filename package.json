@@ -9,7 +9,8 @@
   "author": "Mark Eschbach <meschbach@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "4.0.1"
+    "chai": "4.1.2",
+    "mocha": "5.2.0"
   },
   "repository": "meschbach/js-junk-bucket"
 }
