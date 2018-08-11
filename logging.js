@@ -5,7 +5,7 @@ const defaultNullLogger = Object.freeze({
 	info: nope,
 	error: nope,
 	debug: nope,
-	child: function() { return Object.assign({}, defaultNullLogger); }
+	child: function() { return Object.freeze(Object.assign({}, defaultNullLogger)); }
 });
 
 module.exports = {
