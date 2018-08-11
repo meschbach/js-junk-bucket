@@ -3,7 +3,7 @@ const {formattedConsoleLog} = require("./logging-bunyan");
 const {main} = require("./index");
 
 async function doServiceStart( factory, logger ){
-	const instance = factory.launch(logger);
+	const instance = await factory.launch(logger);
 
 	function stopInstance(){
 		instance.stop();
@@ -13,8 +13,8 @@ async function doServiceStart( factory, logger ){
 	process.on("SIGTERM", stopInstance);
 }
 
-function service( factory ){
-	const logger = formattedConsoleLog();
+function service( name, factory ){
+	const logger = formattedConsoleLog( name );
 	main( () => doServiceStart(factory, logger), logger );
 }
 
