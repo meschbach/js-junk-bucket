@@ -9,7 +9,7 @@ function formattedConsoleLog(appName, opts = {}) {
 	const bunyanOptions = Object.assign({
 		name: appName,
 		stream: formattedLogger,
-		level: debug
+		level: "debug"
 	}, opts);
 	const rootLogger = bunyan.createLogger(bunyanOptions);
 	return rootLogger;
