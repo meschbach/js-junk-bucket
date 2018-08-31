@@ -15,7 +15,7 @@ async function doServiceStart( factory, logger ){
 
 function service( name, factory ){
 	const logger = formattedConsoleLog( name );
-	main( () => doServiceStart(factory, logger), logger );
+	main( async () => await doServiceStart(factory, logger), logger );
 }
 
 module.exports = {
