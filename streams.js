@@ -4,9 +4,9 @@ function promisePiped( from, to ){
 	const future = new Future();
 
 	function remove() {
-		from.off("end", accept);
-		from.off("error", reject);
-		to.off("error", reject);
+		from.removeListener("end", accept);
+		from.removeListener("error", reject);
+		to.removeListener("error", reject);
 	}
 	function reject(e){
 		remove();
