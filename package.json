@@ -1,6 +1,6 @@
 {
   "name": "junk-bucket",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A bucket of code to make NodeJS easier",
   "main": "index.js",
   "scripts": {
