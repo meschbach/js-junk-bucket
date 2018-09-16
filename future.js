@@ -82,14 +82,19 @@ function promiseEvent( from, name ){
 }
 
 async function parallel( promises ){
+	async function resolvePromise( p ){
+		try {
+			const value = await p;
+			return {ok: true, value};
+		}catch(problem){
+			return {ok:false, problem};
+		}
+	}
+
 	const resolutions = promises.map( ( p ) => {
-		return p.then( (value) => {
-			return {ok:true, value}
-		}, (problem) => {
-			return {ok:false, problem}
-		})
+		return resolvePromise(p);
 	});
-	const results = await Promise.all( resolutions )
+	const results = await Promise.all( resolutions );
 	const out = results.reduce( ( output, result ) => {
 		if( result.ok ){
 			output.good.push(result.value);
