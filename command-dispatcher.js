@@ -25,10 +25,10 @@ class CommandDispatcher {
 	}
 
 	once( name, handler ) {
-		this.register( name, function( message, context ) {
-			this.unregister( name )
+		this.register( name, ( message, context ) => {
+			this.unregister( name );
 			handler( message, context )
-		})
+		});
 		return name
 	}
 
