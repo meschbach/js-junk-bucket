@@ -1,41 +1,45 @@
+const assert = require('assert');
+const {expect} = require('chai');
+
 const {EventStore, MemoryStore} = require("../event-store");
 const {promiseEvent} = require("../future");
-const assert = require('assert');
 
 describe("EventStore", function () {
+	beforeEach(function () {
+		this.store = new EventStore( new MemoryStore() );
+	});
+
 	describe("when an event is stored", function () {
+		beforeEach( async function () {
+			this.when = Date.now();
+
+			this.event = { event: true, when:  this.when };
+			this.onEvent = promiseEvent(this.store, "stored");
+
+			await this.store.store( this.event );
+		});
+
 		it("the event is retrievable", async function () {
-			const event = { event: true };
-			const store = new EventStore( new MemoryStore() );
-			await store.store( event );
-			const events = await store.all();
-			assert.deepEqual( events, [ event ]);
+			expect(await this.store.all()).to.deep.eq([this.event]);
 		});
 
 		it("streams the event to interested parties", async function() {
-			const event = {
-				when: Date.now()
-			};
-			const store = new EventStore( new MemoryStore() );
-			const onEvent = promiseEvent(store, "stored");
-			await store.store( event );
-			const stored = await onEvent;
-			assert.equal( stored.event, event );
+			const stored = await this.onEvent;
+			expect( stored.event ).to.deep.eq( this.event );
 		});
 	});
 
 	describe("materialized views", function () {
 		it( "will stream each event", async function () {
 			let filterSaw, viewSaw;
-			const store = new EventStore( new MemoryStore() );
-			store.materialized( function ( event ) {
+			this.store.materialized( function ( event ) {
 				filterSaw = event;
 				return true;
 			}, function ( event ) {
 				viewSaw = event
 			});
 
-			const envelope = await store.store({
+			const envelope = await this.store.store({
 				when: Date.now()
 			});
 			assert.equal(filterSaw, envelope);
@@ -45,18 +49,17 @@ describe("EventStore", function () {
 		it( "will catch up from the start of the stream and keep up", async function () {
 			function makeEvent() { return { when: Date.now() }; }
 			const filterSaw = [], viewSaw = [];
-			const store = new EventStore( new MemoryStore() );
-			const firstEnvelope = await store.store( makeEvent() );
-			const secondEnvelope = await store.store( makeEvent() );
+			const firstEnvelope = await this.store.store( makeEvent() );
+			const secondEnvelope = await this.store.store( makeEvent() );
 
-			await store.materialized( function ( event ) {
+			await this.store.materialized( function ( event ) {
 				filterSaw.push(event);
 				return true;
 			}, function ( event ) {
 				viewSaw.push(event);
 			});
 
-			const envelope = await store.store( makeEvent() );
+			const envelope = await this.store.store( makeEvent() );
 			assert.deepEqual(filterSaw, [firstEnvelope, secondEnvelope, envelope]);
 			assert.deepEqual(viewSaw, [firstEnvelope, secondEnvelope, envelope]);
 		});
