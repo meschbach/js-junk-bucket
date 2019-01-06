@@ -28,10 +28,11 @@ function es6_node( perform ) {
  * @callback perform An async function to be resolved or logged
  * @param logger Logger to be passed to the performer and target when the application fails
  */
-function main( perform, logger = console ) {
+function main( perform, logger = console ) { //TODO: Use a null logger
 	perform( logger )
 		.then(
 			() => {},
+			//TODO: Should set the error status
 			( problem ) => { logger.error( "Error: ", problem) }
 		)
 }

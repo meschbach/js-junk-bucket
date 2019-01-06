@@ -1,5 +1,6 @@
 const bunyan = require("bunyan");
 
+//TODO: When not attached to a TTY color should be disabled.
 function formattedConsoleLog(appName, opts = {}, env = process.env ) {
 	const bunyanFormat = require("bunyan-format");
 
