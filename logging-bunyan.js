@@ -1,12 +1,19 @@
 const bunyan = require("bunyan");
 
-//TODO: When not attached to a TTY color should be disabled.
+function useColor( env ){
+	if( ["false","no","disabled"].includes( env["BUNYAN_COLOR"] ) ) {
+		return false;
+	}
+	return process.stdout.isTTY;
+}
+
 function formattedConsoleLog(appName, opts = {}, env = process.env ) {
 	const bunyanFormat = require("bunyan-format");
 
 
 	const logOutputMode = env["BUNYAN_OUTPUT_MODE"] || env["LOG_OUTPUT_MODE"] || "short";
-	const formattedLogger = bunyanFormat({outputMode: logOutputMode});
+	const useColor = useColor(env);
+	const formattedLogger = bunyanFormat({outputMode: logOutputMode, color: useColor});
 
 	const internalLogLevel = env["BUNYAN_LOG_LEVEL"] || env["LOG_LEVEL"] || "info";
 	const bunyanOptions = Object.assign({
