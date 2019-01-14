@@ -1,4 +1,5 @@
 const {nope} = require("./index");
+const express = require("express");
 
 /**
  * Adapts the standard ExpressJS calling convention to properly handle promises and properly documenting failure.  This
@@ -52,6 +53,11 @@ function express_async( router, logger = console ){
 	return router;
 }
 
+function asyncRouter( logger = console, options ){
+	const router = new express.Router( options );
+	return express_async(router, logger);
+}
+
 /**
  * Attaches convience response methods to the Express response.  Currently this includes 400, 409, and 500.
  *
@@ -79,5 +85,6 @@ function standard_responses( response ) {
 
 module.exports = {
 	make_async: express_async,
-	responses: standard_responses
+	responses: standard_responses,
+	asyncRouter
 };
