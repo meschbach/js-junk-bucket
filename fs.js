@@ -42,8 +42,6 @@ async function makeTempDir( template, base = os.tmpdir() ) {
 	return root;
 }
 
-// const {ENOENT} = require("errors");
-
 async function exists( name ){
 	try {
 		await access(name, fs.constants.F_OK);
@@ -56,6 +54,22 @@ async function exists( name ){
 			throw  e;
 		}
 	}
+}
+
+/**
+ * Creates a new temporary directory scoped to the given context.  Once the context is cleaned up the temporary
+ * directory will be deleted.
+ *
+ * @param context The context to be attached to
+ * @param template Temporary directory template to utilize
+ * @returns {Promise<string>} The path to the temporary directory
+ */
+async function contextTemporaryDirectory( context, template ){
+	const dir = await makeTempDir(template);
+	context.onCleanup(async function () {
+		await rmRecursively(dir);
+	});
+	return dir;
 }
 
 module.exports = {
@@ -71,5 +85,6 @@ module.exports = {
 	//Extensions
 	exists,
 	rmRecursively,
-	makeTempDir
+	makeTempDir,
+	contextTemporaryDirectory
 };
