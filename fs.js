@@ -12,6 +12,7 @@ const mkdtemp = promisify(fs.mkdtemp);
 const mkdir = promisify(fs.mkdir);
 const rmdir = promisify(fs.rmdir);
 const readdir = promisify(fs.readdir);
+const readFile = promisify(fs.readFile);
 const stat = promisify(fs.stat);
 const unlink = promisify(fs.unlink);
 const access = promisify(fs.access);
@@ -79,6 +80,7 @@ module.exports = {
 	mkdir,
 	rmdir,
 	readdir,
+	readFile,
 	stat,
 	unlink,
 
