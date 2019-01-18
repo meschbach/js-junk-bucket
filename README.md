@@ -1,4 +1,5 @@
 # JS Utils
+[![Build Status](https://travis-ci.org/meschbach/js-junk-bucket.svg?branch=master)](https://travis-ci.org/meschbach/js-junk-bucket)
 
 The junk drawer of NodeJS utilities I've had to repeatedly write.
 
