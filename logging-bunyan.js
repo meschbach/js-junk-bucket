@@ -12,8 +12,8 @@ function formattedConsoleLog(appName, opts = {}, env = process.env ) {
 
 
 	const logOutputMode = env["BUNYAN_OUTPUT_MODE"] || env["LOG_OUTPUT_MODE"] || "short";
-	const useColor = useColor(env);
-	const formattedLogger = bunyanFormat({outputMode: logOutputMode, color: useColor});
+	const maybeUseColor = useColor(env);
+	const formattedLogger = bunyanFormat({outputMode: logOutputMode, color: maybeUseColor});
 
 	const internalLogLevel = env["BUNYAN_LOG_LEVEL"] || env["LOG_LEVEL"] || "info";
 	const bunyanOptions = Object.assign({
