@@ -75,5 +75,40 @@ describe("Tracks context and cleanup", function(){
 				})
 			})
 		});
+
+		describe("When creating a subcontext", function(){
+			const subcontextName = "clairinet";
+			beforeEach(function(){
+				this.sub = this.context.subcontext( subcontextName );
+			});
+
+			it( "has the name as a suffix", function(){
+				expect(this.sub.name).to.endWith(subcontextName);
+			});
+
+			describe("And registering a cleanup function", function(){
+				beforeEach(function () {
+					this.invokedCleanup = false;
+					this.sub.onCleanup(async () =>{
+						await delay(5);
+						this.invokedCleanup = true;
+					});
+				});
+
+				describe("And cleanup is called on the parent", function(){
+					beforeEach(async function () {
+						await this.context.cleanup();
+					});
+
+					it("invokes cleanup on the child", function(){
+						expect(this.invokedCleanup).to.be.true;
+					});
+
+					it("generates no errors", function () {
+						expect(this.logger.messages.error).to.be.empty;
+					})
+				});
+			});
+		});
 	});
 });

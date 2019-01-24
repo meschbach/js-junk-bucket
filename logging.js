@@ -23,6 +23,8 @@ class CapturingLogger {
 	error(...args){ this.messages.error.push(args); }
 	info(...args){ this.messages.info.push(args); }
 	warn(...args){ this.messages.warn.push(args); }
+
+	child() { return this; }
 }
 
 module.exports = {

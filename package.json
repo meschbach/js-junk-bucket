@@ -10,7 +10,8 @@
   "license": "MIT",
   "devDependencies": {
     "chai": "4",
-    "express": "4.16",
+    "chai-string": "1",
+    "express": "4",
     "mocha": "5"
   },
   "repository": "meschbach/js-junk-bucket"

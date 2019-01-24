@@ -10,6 +10,21 @@ class Context {
 		this.toCleanup = [];
 	}
 
+	/**
+	 * Creates a subcontext with the given name.
+	 *
+	 * @param name the name of the subcontext
+	 */
+	subcontext( name ){
+		const subname = this.name + "/"+ name;
+		const newLogger = this.logger.child({subcontext: subname});
+		const subcontext = new Context(subname, newLogger);
+		this.onCleanup( async function() {
+			await subcontext.cleanup();
+		});
+		return subcontext;
+	}
+
 	onCleanup( f ){
 		this.toCleanup.unshift(f);
 	}
