@@ -1,4 +1,51 @@
 
+
+const {identity} = require("./fn");
+
+function validate( graph ){
+	const validator = new Validator();
+	if( !graph ){
+		validator.error(".", "Given undefined");
+	}
+
+	function extractValue(key, keyError, internalize){
+		const value = graph[key];
+		if( !value ){
+			validator.error(key,keyError);
+			return;
+		}
+
+		let hadError = false;
+		const internalized = internalize(value, function (error) {
+			validator.error(key, error);
+			hadError = true;
+		});
+
+		if( hadError ){
+			return;
+		}
+		return internalized;
+	}
+
+	return {
+		numeric: function(key) {
+			return extractValue(key, "numeric", function (value, onError) {
+				const parsed = parseInt(value);
+				if( isNaN(parsed) ){
+					return onError("numeric");
+				}
+				return parsed
+			});
+		},
+		string: function(key){
+			return extractValue(key, "string", identity);
+		},
+		done: function () {
+			return validator;
+		}
+	};
+}
+
 class Validator {
 	constructor() {
 		this.result = {};
@@ -28,5 +75,6 @@ class Validator {
 }
 
 module.exports = {
+	validate,
 	Validator
 };
