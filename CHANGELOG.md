@@ -9,6 +9,9 @@
 * context: Subcontexts
 * express: Async aware Router
 * fs/async: Wraps readFile
+* fn: identity function
+* logging: CaptureLogger to capture logging
+* validation: Able to validate an object for strings or integers
 
 *Misc*
 * [Travis CI](https://travis-ci.org/meschbach/js-junk-bucket) build badge
