@@ -11,7 +11,7 @@
   "devDependencies": {
     "chai": "4",
     "chai-string": "1",
-    "express": "4",
+    "express": ">=4.16.0",
     "mocha": "5"
   },
   "repository": "meschbach/js-junk-bucket"
