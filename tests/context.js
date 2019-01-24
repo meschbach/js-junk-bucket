@@ -1,17 +1,15 @@
 const {expect} = require("chai");
+require("chai").use(require("chai-string"));
+
+const {CapturingLogger} = require("../logging");
 const {Context} = require("../context");
 const {delay} = require("../future");
 
 describe("Tracks context and cleanup", function(){
 	describe('Given a context', function () {
 		beforeEach(function () {
-			this.loggedErrors = [];
-			const captureLogger = {
-				error: (...args) => {
-					this.loggedErrors.push(args);
-				}
-			};
-			this.context = new Context("test", captureLogger);
+			this.logger = new CapturingLogger();
+			this.context = new Context("test", this.logger );
 		});
 
 		describe("and a registered cleanup item which executes immediately", function(){
@@ -31,7 +29,7 @@ describe("Tracks context and cleanup", function(){
 				});
 
 				it("generates no errors", function () {
-					expect(this.loggedErrors).to.be.empty;
+					expect(this.logger.messages.error).to.be.empty;
 				})
 			})
 		});
@@ -55,7 +53,7 @@ describe("Tracks context and cleanup", function(){
 				});
 
 				it("generates no errors", function () {
-					expect(this.loggedErrors).to.be.empty;
+					expect(this.logger.messages.error).to.be.empty;
 				})
 			})
 		});
@@ -73,7 +71,7 @@ describe("Tracks context and cleanup", function(){
 				});
 
 				it("logs the exception", function () {
-					expect(this.loggedErrors).to.not.be.empty;
+					expect(this.logger.messages.error).to.not.be.empty;
 				})
 			})
 		});
