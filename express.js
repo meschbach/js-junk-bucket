@@ -50,6 +50,9 @@ function express_async( router, logger = console ){
 	router.a_delete = function( path, handler ){
 		router.delete( path, async_handler( handler, logger ) )
 	};
+	router.a_all = function( path, handler ){
+		router.all( path, async_handler( handler, logger ) );
+	};
 	return router;
 }
 
