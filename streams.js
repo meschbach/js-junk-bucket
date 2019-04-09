@@ -25,6 +25,24 @@ function promisePiped( from, to ){
 	return future.promised;
 }
 
+
+const {Transform} = require("stream");
+class EchoOnReceive extends Transform {
+	constructor( log = console ){
+		this.log = log;
+	}
+	_transform( chunk, encoding, cb ) {
+		this.log.log("Chunk", chunk);
+		cb(null,chunk);
+	}
+
+	_final(cb){
+		this.log.log("Final called");
+		cb();
+	}
+}
+
 module.exports = {
-	promisePiped
+	promisePiped,
+	EchoOnReceive
 };
