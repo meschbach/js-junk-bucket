@@ -1,0 +1,6 @@
+{
+  "source": ".",
+  "excludes" : ["node_modules", "docs"],
+  "destination": "./docs",
+  "plugins": [{"name": "esdoc-node"},{"name": "esdoc-standard-plugin", "package" : "junk-bucket"}]
+}

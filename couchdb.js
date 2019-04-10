@@ -1,3 +1,7 @@
+/**
+ * @module couchdb
+ */
+
 const nano = require( "nano" )
 const { es6_node } = require( './index' )
 
@@ -10,7 +14,7 @@ const { es6_node } = require( './index' )
 class Service {
 	/**
 	 * Declares a new service to attempt to communicate with
-	 * @param host the URL of the CouchDB instnaces to be communciated with
+	 * @param {string} host the URL of the CouchDB instnaces to be communciated with
 	 */
 	constructor( host = "http://localhost:5984" ){
 		this.client = nano( host )
@@ -19,9 +23,9 @@ class Service {
 	/**
 	 * Creates a new database if the database doesn't exist.  If the database does exist it's considered an error
 	 *
-	 * @param name Name of the database to be created
+	 * @param name {string} Name of the database to be created
 	 * @return {Promise} completed when the database is created
-	 * @throws Error if the database exxists
+	 * @throws Error if the database exists
 	 */
 	create_db( name ) {
 		return es6_node( (cb ) => this.client.db.create( name, cb ) )
@@ -29,7 +33,7 @@ class Service {
 
 	/**
 	 * Enumerates all databases within the represenetd CouchDB system
-	 * @return {Promise<Collection<String>>} the names of the database existing within the represented CouchDB service
+	 * @return {Promise<Array<String>>} the names of the database existing within the represented CouchDB service
 	 */
 	list_dbs(){
 		return es6_node( ( cb ) => this.client.db.list( cb ) )
@@ -38,7 +42,7 @@ class Service {
 	/**
 	 * Creates a new database by the given name if it doesn't exist, otherwise returns a wrapper around the database
 	 *
-	 * @return {Promise<CouchDB.Database>} a promise for the database representation
+	 * @return {Promise<Database>} a promise for the database representation
 	 */
 	async ensure_db_exists( name ){
 		const dbs = await this.list_dbs()
@@ -51,6 +55,8 @@ class Service {
 
 /**
  * Encapsulates the CouchDB operations.
+ *
+ * @interface
  */
 class Database {
 	constructor( client ) {
@@ -93,12 +99,12 @@ class Database {
 	 * Retrieves the given document by ID, then modifies the document, then writes the document back.
 	 *
 	 * @param id {String} the ID of the document to be modified
-	 * @param modfiied { function( originalDocument ) = Promise} a function to promise a modified document
+	 * @param modifier { function( originalDocument ) = Promise} a function to promise a modified document
 	 * @return a promise to update the given document
 	 */
 	async update_by_id( id, modifier ){
 		const document = await this.get_by_id( id );
-		const modified = await modifier( document )
+		const modified = await modifier( document );
 		return await this.insert( modified )
 	}
 
@@ -107,7 +113,7 @@ class Database {
 	 *
 	 * @param id {String} the _id of the document to be modified
 	 * @param generator { function() = Promise } A promise gneerator to create a new document for insert
-	 * @param modfiied { function( originalDocument ) = Promise} a promise generator to modify the original document to be stored
+	 * @param updater { function( originalDocument ) = Promise} a promise generator to modify the original document to be stored
 	 * @return the results fo the insert or update
 	 */
 	async upsert( id, generator, updater ){
@@ -133,4 +139,8 @@ class Database {
 	}
 }
 
-exports.Service = Service
+module.exports = {
+	Service,
+	Database
+};
+
