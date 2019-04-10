@@ -20,7 +20,7 @@ function promisePiped( from, to ){
 	from.on("error", reject);
 	to.on("error", reject);
 
-	from.on("end", accept);
+	to.on("finish", accept);
 	from.pipe(to);
 	return future.promised;
 }
