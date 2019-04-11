@@ -105,6 +105,7 @@ async function parallel( promises ){
 	}, { good: [], bad: [] });
 
 	if( out.bad.length > 0 ){
+		//TODO: Figure out better way to dsiplay the multiple errors.
 		const error = new Error("Failed to resolves all promises");
 		error.good = out.good;
 		error.bad = out.bad;
