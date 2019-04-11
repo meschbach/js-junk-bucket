@@ -1,6 +1,6 @@
 const Future = require("./future");
 
-const {Readable} = require("stream");
+const {Readable, Transform, Writable} = require("stream");
 
 function promisePiped( from, to ){
 	const future = new Future();
@@ -27,8 +27,6 @@ function promisePiped( from, to ){
 	return future.promised;
 }
 
-
-const {Transform} = require("stream");
 class EchoOnReceive extends Transform {
 	constructor( log = console ){
 		this.log = log;
@@ -70,8 +68,33 @@ class MemoryReadable extends Readable {
 	}
 }
 
+/**
+ * Accumulates bytes written to the sink.  This sink is never finished or finalized.
+ */
+class MemoryWritable extends Writable {
+	/**
+	 * Initializes an empty buffer with the provided properties.
+	 *
+	 * @param props properties to provide to the writable
+	 */
+	constructor(props) {
+		super(props);
+		this.bytes = Buffer.alloc(0);
+	}
+
+	_write(chunk, encoding, callback) {
+		try {
+			this.bytes = Buffer.concat([this.bytes, chunk]);
+			callback(null);
+		}catch(e){
+			callback(e);
+		}
+	}
+}
+
 module.exports = {
 	promisePiped,
 	EchoOnReceive,
-	MemoryReadable
+	MemoryReadable,
+	MemoryWritable
 };

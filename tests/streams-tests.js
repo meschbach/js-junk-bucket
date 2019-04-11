@@ -1,7 +1,7 @@
 const {expect} = require("chai");
 
 const stream = require("stream");
-const {promisePiped, MemoryReadable} = require("../streams");
+const {promisePiped, MemoryReadable, MemoryWritable} = require("../streams");
 
 describe("promisePiped", function(){
 	it( "pipes the full buffer through", async function(){
@@ -39,4 +39,40 @@ describe("MemoryReadable", function () {
 			});
 		});
 	})
+});
+
+describe("MemoryWritable", function () {
+	describe("On no write", function () {
+		beforeEach(function () {
+			this.stream = new MemoryWritable();
+		});
+
+		it("has an empty buffer", function () {
+			expect(this.stream.bytes.length).to.deep.eq(0);
+		});
+	});
+
+	describe("On write", function () {
+		beforeEach(function () {
+			this.example = Buffer.from("no contract at all");
+			this.stream = new MemoryWritable();
+			this.stream.write(this.example);
+		});
+
+		it("has the correct byte count", function () {
+			expect(this.stream.bytes.length).to.deep.eq(this.example.length);
+		});
+
+
+		describe("On second write", function () {
+			beforeEach(function () {
+				this.example2 = Buffer.from("freestyle stuff");
+				this.stream.write(this.example2);
+			});
+
+			it("has the correct byte count", function () {
+				expect(this.stream.bytes.length).to.deep.eq(this.example.length + this.example2.length);
+			});
+		});
+	});
 });
