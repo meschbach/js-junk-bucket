@@ -1,5 +1,7 @@
 const Future = require("./future");
 
+const {Readable} = require("stream");
+
 function promisePiped( from, to ){
 	const future = new Future();
 
@@ -42,7 +44,34 @@ class EchoOnReceive extends Transform {
 	}
 }
 
+/**
+ * A readable which will provide a given buffer on the first read attempt then appear closed on all further attempts.
+ */
+class MemoryReadable extends Readable {
+	/**
+	 *
+	 * @param source {Buffer} bytes to be provided
+	 * @param props additional properties to be passed to Readable
+	 */
+	constructor(source, props) {
+		super(props);
+		this.bytes = source;
+		this.pushed = false;
+	}
+
+	_read( size ){
+		if( !this.pushed ) {
+			this.pushed = true;
+			this.push(this.bytes);
+		} else {
+			this.readable = false;
+			this.push(null);
+		}
+	}
+}
+
 module.exports = {
 	promisePiped,
-	EchoOnReceive
+	EchoOnReceive,
+	MemoryReadable
 };
