@@ -9,4 +9,4 @@ jobs:
   include:
     - stage: Produce Coverage
       node_js: node
-      script: npm install coveralls blanket mocha-lcov-reporter && mocha --require blanket --reporter mocha-lcov-reporter tests | ./node_modules/coveralls/bin/coveralls.js
+      script: npm install coveralls istanbul mocha-lcov-reporter && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec tests && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
