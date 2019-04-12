@@ -5,3 +5,8 @@ node_js:
   - "9"
   - "10"
   - "11"
+jobs:
+  include:
+    - stage: Produce Coverage
+      node_js: node
+      script: npm install coveralls blanket mocha-lcov-reporter && mocha --require blanket --reporter mocha-lcov-reporter tests | ./node_modules/coveralls/bin/coveralls.js
