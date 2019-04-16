@@ -4,6 +4,8 @@
 
 The junk drawer of NodeJS utilities I've had to repeatedly write.
 
+[Documentation](https://doc.esdoc.org/github.com/meschbach/js-junk-bucket)
+
 ## Accumulated Junk
 
 * [Async utilties](index.js)
