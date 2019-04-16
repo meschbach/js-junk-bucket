@@ -12,7 +12,7 @@
     "chai": "4",
     "chai-string": "1",
     "express": ">=4.16.0",
-    "mocha": "5"
+    "mocha": "6"
   },
   "repository": "meschbach/js-junk-bucket"
 }
