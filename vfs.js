@@ -20,6 +20,12 @@ class InMemoryVFS {
 		return !!this.files[file];
 	}
 
+	async _expectFile( file ){
+		if( !this.files[file]){
+			throw new Error("No such file " + file);
+		}
+	}
+
 	async unlink( file ){
 		if( this.files[file] ){
 			delete this.files[file];
@@ -27,13 +33,12 @@ class InMemoryVFS {
 	}
 
 	async createReadableStream( file ){
-		if( !(await this.exists(file)) ){
-			throw new Error("No such file "+ file);
-		}
+		await this._expectFile(file);
 		return new MemoryReadable(this.files[file]);
 	}
 
 	async asBytes( file ){
+		await this._expectFile(file);
 		return Buffer.from(this.files[file]);
 	}
 

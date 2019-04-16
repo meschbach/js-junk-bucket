@@ -17,6 +17,20 @@ function abstractVFSBehavior( VFS, name ) {
 				const sut = new VFS();
 				expect(await sut.exists("nonexistent-file")).to.eq(false);
 			});
+
+			it("raises a reasonable error the file does not exist", async function () {
+				const exampleFileName = "non-existent-file";
+				let raised = false;
+				try {
+					const sut = new VFS();
+					await sut.asBytes(exampleFileName);
+				}catch(e){
+					raised = true;
+					expect(e.message).to.include(exampleFileName);
+				}finally {
+					expect(raised).to.eq(true);
+				}
+			})
 		});
 
 		describe("When creating a file as bytes", function(){
