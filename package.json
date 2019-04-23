@@ -4,7 +4,7 @@
   "description": "A bucket of code to make NodeJS easier",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests"
+    "test": "mocha tests --recursive"
   },
   "author": "Mark Eschbach <meschbach@gmail.com>",
   "license": "MIT",

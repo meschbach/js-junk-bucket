@@ -1,6 +1,7 @@
 const Future = require("./future");
 
 const {Readable, Transform, Writable} = require("stream");
+const {LengthPrefixedFrameIngress, LengthPrefixedFrameEgress} = require("./streams/network-length-frame");
 
 function promisePiped( from, to ){
 	const future = new Future();
@@ -96,6 +97,7 @@ class MemoryWritable extends Writable {
 module.exports = {
 	promisePiped,
 	EchoOnReceive,
+	LengthPrefixedFrameIngress, LengthPrefixedFrameEgress,
 	MemoryReadable,
 	MemoryWritable
 };
