@@ -29,6 +29,7 @@ function promisePiped( from, to ){
 
 class EchoOnReceive extends Transform {
 	constructor( log = console ){
+		super();
 		this.log = log;
 	}
 	_transform( chunk, encoding, cb ) {
