@@ -6,6 +6,7 @@ const defaultNullLogger = Object.freeze({
 	error: nope,
 	debug: nope,
 	warn: nope,
+	trace: nope,
 	child: function() { return Object.freeze(Object.assign({}, defaultNullLogger)); }
 });
 
@@ -15,7 +16,8 @@ class CapturingLogger {
 			debug: [],
 			error: [],
 			info: [],
-			warn: []
+			warn: [],
+			trace: []
 		};
 	}
 
@@ -23,7 +25,7 @@ class CapturingLogger {
 	error(...args){ this.messages.error.push(args); }
 	info(...args){ this.messages.info.push(args); }
 	warn(...args){ this.messages.warn.push(args); }
-
+	trace(...args){ this.messages.trace.push(args); }
 	child() { return this; }
 }
 
