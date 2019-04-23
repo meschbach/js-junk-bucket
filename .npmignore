@@ -3,3 +3,5 @@ tests/
 .idea/
 docs/
 .esdoc.json
+.nyc_output
+coverage

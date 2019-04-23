@@ -4,15 +4,19 @@
   "description": "A bucket of code to make NodeJS easier",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests --recursive"
+    "test": "mocha tests --recursive",
+    "coverage": "nyc --reporter=html --reporter=text mocha tests --recursive",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "Mark Eschbach <meschbach@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "chai": "4",
     "chai-string": "1",
+    "coveralls": "3.0.3",
     "express": ">=4.16.0",
-    "mocha": "6"
+    "mocha": "6",
+    "nyc": "14.0.0"
   },
   "repository": "meschbach/js-junk-bucket"
 }
