@@ -49,6 +49,24 @@ function addressOnListen( server, port = 0, address ){
 	}
 }
 
-module.exports = {
-	addressOnListen
+async function listen(context, server, port, bindToAddress){
+	const result = addressOnListen(server, port, bindToAddress);
+	result.socket.on("close", function(){
+		context.logger.trace("Server socket closed");
+	});
+	context.onCleanup(async () => {
+		context.logger.trace("Cleaning up server",{address});
+		//TODO: This should be merged with addressOnListen, making this state management easier
+		// const promiseClosed = promiseEvent(result.socket, "close");
+		result.stop();
+		// await promiseClosed;
+	});
+	const address = await result.address;
+	context.logger.trace("Server bound to",{address});
+	return address.host + ":" + address.port;
 }
+
+module.exports = {
+	addressOnListen,
+	listen
+};
