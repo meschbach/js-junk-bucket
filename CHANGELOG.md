@@ -1,4 +1,8 @@
 # Change Log
+## Next
+
+## v1.2.1 - Smaller Artifact
+* Removed `esdocs` generated artifacts from the NPM upload.
 
 ## v1.2.0 - All the streams!
 *Features*
