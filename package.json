@@ -4,8 +4,8 @@
   "description": "A bucket of code to make NodeJS easier",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests --recursive",
-    "coverage": "nyc --reporter=html --reporter=text mocha tests --recursive",
+    "test": "mocha tests './{,!(node_modules)/**/}*.test.js' --recursive",
+    "coverage": "nyc --reporter=html --reporter=text mocha tests './{,!(node_modules)/**/}*.test.js' --recursive",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "Mark Eschbach <meschbach@gmail.com>",
