@@ -13,9 +13,9 @@
   "devDependencies": {
     "chai": "4",
     "chai-string": "1",
-    "coveralls": "3.0.6",
+    "coveralls": "3.0.8",
     "express": "4.17.1",
-    "mocha": "6.2.1",
+    "mocha": "6.2.2",
     "nyc": "14.1.1"
   },
   "repository": "meschbach/js-junk-bucket"
