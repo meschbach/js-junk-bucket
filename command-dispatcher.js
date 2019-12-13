@@ -1,15 +1,13 @@
 /**
  * @module command-dispatcher
  *
- * Adapted from WebGiraffe
  */
-
 const { nope } = require('./index');
 
 /**
- * Routes a given message to a specific command handler.
+ * Routes to a named handler of some object, otherwise routes to the default handler
  */
-class CommandDispatcher {
+class Dispatcher {
 	/**
 	 * Builds a new handler which by directs all messages to the default handler.
 	 * @param defaultHandler {Function} default handler
@@ -47,11 +45,11 @@ class CommandDispatcher {
 	 * Dispatches the given message to the registered handler, otherwise dispatches to the default handler if the
 	 * handler can not be found.
 	 *
+	 * @param targetName target to be dispatched too
 	 * @param message message to extract the handler name from and encapsulating the request
 	 * @param context invocation context
 	 */
-	dispatch( message, context ){
-		const targetName = message.command;
+	dispatch( targetName, message, context ){
 		const handler = this.handlers[targetName] || this.defaultHandler;
 		handler( message, context );
 	}
@@ -80,6 +78,32 @@ class CommandDispatcher {
 }
 
 /**
+ * Routes a given message to a specific command handler.
+ */
+class CommandDispatcher extends Dispatcher {
+	/**
+	 * Builds a new handler which by directs all messages to the default handler.
+	 * @param defaultHandler {Function} default handler
+	 */
+	constructor( defaultHandler = nope ) {
+		super(defaultHandler);
+	}
+
+	/**
+	 * Dispatches the given message to the registered handler, otherwise dispatches to the default handler if the
+	 * handler can not be found.
+	 *
+	 * @param message message to extract the handler name from and encapsulating the request
+	 * @param context invocation context
+	 */
+	dispatch( message, context ){
+		const targetName = message.command;
+		super.dispatch(targetName, message, context);
+	}
+}
+
+
+/**
  * Monotonically incrementing base 36 radix text.
  */
 class Base36Namer {
@@ -103,6 +127,7 @@ class Base36Namer {
 }
 
 module.exports = {
+	Base36Namer,
 	CommandDispatcher,
-	Base36Namer
+	Dispatcher
 };
