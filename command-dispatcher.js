@@ -51,7 +51,7 @@ class Dispatcher {
 	 */
 	dispatch( targetName, message, context ){
 		const handler = this.handlers[targetName] || this.defaultHandler;
-		handler( message, context );
+		return handler( message, context );
 	}
 
 	/**
