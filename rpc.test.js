@@ -1,22 +1,7 @@
-const EventEmitter = require("events");
-const {RPCClient, RPCService} = require("./rpc");
 const {expect} = require("chai");
-const assert = require("assert");
 
-class JSONPipe extends EventEmitter {
-	constructor(props) {
-		super(props);
-	}
-
-	send(what){
-		assert(what);
-		const encoded = JSON.stringify(what);
-		setTimeout(() => {
-			const duplicate = JSON.parse(encoded);
-			this.emit("message", duplicate);
-		},0);
-	}
-}
+const {RPCClient, RPCService} = require("./rpc");
+const {JSONPipe} = require("./json-pipe");
 
 describe("Given an RPC mechanism", function () {
 	describe("When a registered call is invoked", function () {
