@@ -1,6 +1,17 @@
 # Change Log
 ## Next
 
+## v1.3.0
+* [Length Prefixed Frames](streams/network-length-frame.js)
+* [SHA256 digest](crypto.js)
+* [`async listen` for addreses](sockets.js) to retrieve an anonymous bind.
+* [`JailedVFS`](vfs.js) for only exposing a sub-filesystem to a client.  From Irrigation.
+* [`Dispatcher` for command routing](command-dispatcher.js) for building more complicated multiplexed services.  Extracted
+from and a generalization of WebGiraffe's implementation.
+* [`RPC` service and client](rpc.js) providing basic RPC services acrossed a message system.  This is useful for things
+like WebSockets.
+* [`JSONPipe`](json-pipe.js) for mimicking IPC with tests.
+
 ## v1.2.1 - Smaller Artifact
 * Removed `esdocs` generated artifacts from the NPM upload.
 

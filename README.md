@@ -1,8 +1,8 @@
-# JS Utils
+# junk-bucket
 [![Build Status](https://travis-ci.org/meschbach/js-junk-bucket.svg?branch=master)](https://travis-ci.org/meschbach/js-junk-bucket)
 [![Coverage Status](https://coveralls.io/repos/github/meschbach/js-junk-bucket/badge.svg?branch=master)](https://coveralls.io/github/meschbach/js-junk-bucket?branch=master)
 
-The junk drawer of NodeJS utilities I've had to repeatedly write.
+A buck of utilities to ease building and maintinaing complicated JavaScript applications. 
 
 [Documentation](https://doc.esdoc.org/github.com/meschbach/js-junk-bucket)
 
