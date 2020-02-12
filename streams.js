@@ -1,4 +1,4 @@
-const Future = require("./future");
+const {Future} = require("./future");
 
 const {Readable, Transform, Writable} = require("stream");
 const {LengthPrefixedFrameIngress, LengthPrefixedFrameEgress} = require("./streams/network-length-frame");

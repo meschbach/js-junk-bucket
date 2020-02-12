@@ -1,4 +1,4 @@
-const Future = require('./future')
+const {Future} = require('./future');
 const assert = require('assert')
 
 class LogicalTimerAlarm {

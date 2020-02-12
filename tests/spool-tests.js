@@ -1,7 +1,7 @@
 const mocha = require("mocha")
 const assert = require("assert")
 
-const Future = require("../future")
+const {Future} = require("../future");
 const {Sequence} = require('../sequence')
 const {LogicalTimer, WatchDog, defaultNodeTimer} = require("../timers")
 

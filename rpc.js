@@ -1,5 +1,5 @@
 const {Dispatcher, Base36Namer} = require("./command-dispatcher");
-const Future = require("./future");
+const {Future} = require("./future");
 
 class RPCClient {
 	constructor(input, output) {

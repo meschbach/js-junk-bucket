@@ -1,6 +1,6 @@
 const mocha = require("mocha")
 const assert = require("assert")
-const Future = require("../future")
+const {Future} = require("../future");
 
 
 describe( "Future", function () {

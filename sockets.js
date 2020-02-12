@@ -1,4 +1,4 @@
-const Future = require("./future");
+const {Future} = require("./future");
 
 /**
  * Abstracts out how to retrieve an address of a socket when being bound as a listener.  The resulting socket is the

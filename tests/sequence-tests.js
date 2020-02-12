@@ -2,7 +2,7 @@ const mocha = require("mocha")
 const assert = require("assert")
 
 const {Sequence} = require('../sequence')
-const Future = require('../future')
+const {Future} = require('../future');
 
 describe("Sequence", function () {
 	it("initial value is passed to first in sequence", async function(){

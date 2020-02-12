@@ -114,7 +114,9 @@ async function parallel( promises ){
 	return out.good;
 }
 
-module.exports = Future
-module.exports.delay = delay;
-module.exports.promiseEvent = promiseEvent;
-module.exports.parallel = parallel;
+module.exports = {
+	Future,
+	delay,
+	promiseEvent,
+	parallel
+};
