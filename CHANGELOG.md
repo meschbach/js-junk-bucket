@@ -1,6 +1,22 @@
 # Change Log
 ## Next
 
+## v1.4.0
+* *Breaking* [Future](future.js) has changed from being the object returned from the module to a component.  To update
+you'll need to update from
+```javascript
+const Future = require("junk-bucket/future");
+```
+to
+```javascript
+const {Future} = require("junk-bucket/future");
+```
+* [streams](streams) for eveyone!  Utilities to [skip elements](streams/skips.js), [gather elements](streams/gather.js),
+and [otherwise make life easier](streams/junk.js).
+* [Many functions](fn.js) have been added.  Including a `y` combinator type function.
+* OpenTracing wrappers for [Postgres](pg-opentracing.js) and [Express](express-opentracing.js).
+* [Logging Morgan to an a Context for the request](express-morgan.js).
+
 ## v1.3.0
 * [Length Prefixed Frames](streams/network-length-frame.js)
 * [SHA256 digest](crypto.js)
