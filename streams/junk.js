@@ -65,11 +65,28 @@ class ExpandTransform extends Transform {
 	}
 }
 
+class Top extends Writable {
+	constructor() {
+		super({objectMode:true});
+		this.rank = (o) => o.desire;
+		this.limit = 10;
+		this.bucket = [];
+	}
+
+	_write(chunk, encoding, callback) {
+		this.bucket.push(chunk);
+		this.bucket.sort((l,r) => r.desire - l.desire );
+		this.bucket = this.bucket.slice(0,this.limit);
+		callback();
+	}
+}
+
 module.exports = {
 	DiscardingWritable,
 	expandStream,
 	ExpandTransform,
 	FutureMappingTransform,
 	GatedTransform,
-	MappingTransform
+	MappingTransform,
+	Top
 };
