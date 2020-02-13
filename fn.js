@@ -16,7 +16,7 @@ function arg2(_arg1, arg2){
 function filterEnvelope(low,high, element){
 	return function(o){
 		const value = element(o);
-		return low < value &&  value <= high;
+		return low <= value &&  value <= high;
 	}
 }
 
