@@ -46,11 +46,27 @@ function above( threshold, element){
 
 function truthy(input){ return !!input }
 
+/**
+ * Builds a comparator able to extract a value from a composite for ordering the highest element first.
+ *
+ * @param element extracts an integer value to be compared
+ * @returns {function(...[*]=)}
+ */
+function highestFirstComparator(element = identity){
+	return function (l,r) {
+		const left = element(l);
+		const right = element(r);
+		return right - left;
+	}
+}
+
 module.exports = {
 	above,
 	arg2,
 	append,
 	filterEnvelope,
+	highestFirstComparator,
+	highestFirstIdentityComparator: highestFirstComparator(),
 	identity,
 	property,
 	sortHigh,

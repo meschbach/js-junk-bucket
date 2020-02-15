@@ -1,5 +1,5 @@
 const {expect} = require("chai");
-const {identity, arg2} = require("./fn");
+const {identity, arg2, highestFirstComparator} = require("./fn");
 
 describe("Identity", function(){
 	describe("when invoked", function(){
@@ -68,5 +68,31 @@ describe("y combinator", function () {
 			expect(y(call,call,call)(1)).to.eq(7);
 			expect(called).to.eq(3);
 		})
+	});
+});
+
+describe("highestFirstComparator", function () {
+	describe("Given integers", function () {
+		it("is zero for equal elements", function () {
+			const comparator = highestFirstComparator();
+			expect(comparator(42,42)).to.eq(0);
+		});
+		it("is greater than zero for RHS being higher", function () {
+			const comparator = highestFirstComparator();
+			expect(comparator(64,96)).to.be.above(0);
+		});
+		it("is less than zero for RHS being lower", function () {
+			const comparator = highestFirstComparator();
+			expect(comparator(3,2)).to.be.below(0);
+		});
+
+		describe("When fed through Array.sort", function () {
+			it("yields inverse natural values", function () {
+				const comparator = highestFirstComparator();
+				const input = [1,96,4,32,42];
+				input.sort(comparator);
+				expect(input).to.deep.eq([96,42,32,4,1]);
+			});
+		});
 	});
 });
