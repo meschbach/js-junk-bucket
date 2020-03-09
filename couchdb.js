@@ -5,6 +5,31 @@
 const assert = require("assert");
 const nano = require( "nano" );
 const { es6_node } = require( './index' );
+const {AsyncSingleRead} = require("./streams/async");
+
+class ReadCouchDocuments extends AsyncSingleRead {
+	constructor(client, set) {
+		super({
+			objectMode:true
+		});
+		this.client = client;
+		this.documentSet = set;
+		this.index = 0;
+	}
+
+	async _doRead() {
+		const index = this.index;
+		if( this.index >= this.documentSet.length ){
+			this.emit("end");
+			return;
+		}
+		this.index++;
+
+		const docID = this.documentSet[index];
+		const document =  await this.client.get_by_id(docID);
+		return document;
+	}
+}
 
 /**
  * A single CouchDB instance to communicate with over a well defined URL.  Exposes asynchronous management of database
@@ -94,8 +119,14 @@ class Database {
 		})
 	}
 
-	view( design, name, params ){
-		return es6_node( ( cb  ) => this.client.view( design, name, params, cb ) )
+	async view( design, name, params ){
+		return await this.client.view( design, name, params );
+	}
+
+	async streamViewResults( design, name, params ){
+		const viewResults = await this.view( design, name, params );
+		const viewDocumentsIDs = viewResults.rows.map((r) => r.id);
+		return new ReadCouchDocuments(this, viewDocumentsIDs);
 	}
 
 	/**
