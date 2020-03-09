@@ -1,4 +1,5 @@
-const {Writable} = require("stream");
+const {Transform, Writable} = require("stream");
+const {highestFirstIdentityComparator} = require("../fn");
 
 class DiscardingWritable extends Writable {
 	constructor() {
@@ -66,16 +67,16 @@ class ExpandTransform extends Transform {
 }
 
 class Top extends Writable {
-	constructor() {
+	constructor(options = {}) {
 		super({objectMode:true});
-		this.rank = (o) => o.desire;
-		this.limit = 10;
+		this.comparator = options.comparator || highestFirstIdentityComparator;
+		this.limit = options.limit || 10;
 		this.bucket = [];
 	}
 
 	_write(chunk, encoding, callback) {
 		this.bucket.push(chunk);
-		this.bucket.sort((l,r) => r.desire - l.desire );
+		this.bucket.sort(this.comparator);
 		this.bucket = this.bucket.slice(0,this.limit);
 		callback();
 	}
