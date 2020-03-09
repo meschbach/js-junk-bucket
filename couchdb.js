@@ -5,7 +5,7 @@
 const assert = require("assert");
 const nano = require( "nano" );
 const { es6_node } = require( './index' );
-const {AsyncSingleRead} = require("./streams/async");
+const {AsyncSingleRead, AsyncWritable} = require("./streams/async");
 
 class ReadCouchDocuments extends AsyncSingleRead {
 	constructor(client, set) {
@@ -28,6 +28,19 @@ class ReadCouchDocuments extends AsyncSingleRead {
 		const docID = this.documentSet[index];
 		const document =  await this.client.get_by_id(docID);
 		return document;
+	}
+}
+
+class CouchWritable extends AsyncWritable {
+	constructor(couchdb) {
+		super({
+			objectMode:true
+		});
+		this.couch = couchdb;
+	}
+
+	async _doWrite(record) {
+		await this.couch.insert(record);
 	}
 }
 
@@ -175,6 +188,7 @@ class Database {
 
 module.exports = {
 	Service,
-	Database
+	Database,
+	CouchWritable
 };
 
