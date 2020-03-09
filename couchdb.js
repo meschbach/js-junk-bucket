@@ -2,8 +2,9 @@
  * @module couchdb
  */
 
-const nano = require( "nano" )
-const { es6_node } = require( './index' )
+const assert = require("assert");
+const nano = require( "nano" );
+const { es6_node } = require( './index' );
 
 /**
  * A single CouchDB instance to communicate with over a well defined URL.  Exposes asynchronous management of database
@@ -45,7 +46,9 @@ class Service {
 	 * @return {Promise<Database>} a promise for the database representation
 	 */
 	async ensure_db_exists( name ){
-		const dbs = await this.list_dbs()
+		assert(name);
+
+		const dbs = await this.list_dbs();
 		if( !dbs.includes(name) ){
 			await this.create_db( name )
 		}
