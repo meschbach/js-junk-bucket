@@ -137,8 +137,8 @@ class Database {
 	 * @return true if the document exists, otherwise false
 	 */
 	async exists( id ){
-		const document = this.maybe_by_id(id);
-		return null == document;
+		const document = await this.maybe_by_id(id);
+		return !!document;
 	}
 }
 
