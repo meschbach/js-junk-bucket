@@ -1,9 +1,9 @@
 const {expect} = require("chai");
 require("chai").use(require("chai-string"));
 
-const {CapturingLogger} = require("../logging");
-const {Context} = require("../context");
-const {delay} = require("../future");
+const {CapturingLogger} = require("./logging");
+const {Context} = require("./context");
+const {delay} = require("./future");
 
 describe("Tracks context and cleanup", function(){
 	describe('Given a context', function () {
