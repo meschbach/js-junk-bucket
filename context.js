@@ -6,6 +6,7 @@
 /**
  * @external Logger http://example.com
  */
+const assert = require("assert");
 
 /**
  * Provides a simple control structure to allow for composition of destruction operation.  The primary intent is to ease
@@ -21,6 +22,8 @@ class Context {
 	 * @param logger a logger ot use
 	 */
 	constructor(name, logger){
+		assert(name);
+		assert(logger);
 		/**
 		 * The name of the context
 		 * @type {string}
@@ -77,6 +80,7 @@ class Context {
 				this.logger.error("Failed to cleanup", e);
 			}
 		}
+		this.toCleanup = [];
 	}
 }
 

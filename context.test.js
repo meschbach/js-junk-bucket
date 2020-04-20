@@ -37,9 +37,19 @@ describe("Tracks context and cleanup", function(){
 					expect(invokedCleanup).to.be.true;
 				});
 
-				it("generates no errors", function () {
-					expect(this.logger.messages.error).to.be.empty;
-				})
+				it("does not generates no errors", function () {
+					expect(logger.messages.error).to.be.empty;
+				});
+
+				describe("when invoked a second time", function () {
+					beforeEach( async function () {
+						await context.cleanup();
+					});
+
+					it("is not invoked", function () {
+						expect(invokedCleanupCount).to.eq(1);
+					});
+				});
 			})
 		});
 
