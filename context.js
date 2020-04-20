@@ -7,6 +7,7 @@
  * @external Logger http://example.com
  */
 const assert = require("assert");
+const EventEmitter = require("events");
 
 /**
  * Provides a simple control structure to allow for composition of destruction operation.  The primary intent is to ease
@@ -14,7 +15,7 @@ const assert = require("assert");
  *
  * For example: when creating a temporary directory this may register to cleanup said directory
  */
-class Context {
+class Context extends EventEmitter {
 	/**
 	 * Creates a new context with the given name and logger.
 	 *
@@ -22,6 +23,7 @@ class Context {
 	 * @param logger a logger ot use
 	 */
 	constructor(name, logger){
+		super();
 		assert(name);
 		assert(logger);
 		/**
@@ -54,6 +56,12 @@ class Context {
 		const subcontext = new Context(subname, newLogger);
 		this.onCleanup( async function() {
 			await subcontext.cleanup();
+		});
+
+		this.emit("subcontext", {
+			name,
+			parent: this,
+			subcontext
 		});
 		return subcontext;
 	}
