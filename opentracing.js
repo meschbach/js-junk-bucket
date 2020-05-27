@@ -36,12 +36,19 @@ function traceRoot( context, name ){
 
 	const span = tracer.startSpan(spanName);
 	context.opentracing.span = span;
-	context.onCleanup(() => {
-		contxt.opentracing.span.finish();
-	});
+	context.onCleanup(() => span.finish() );
+	return span;
+}
+
+function traceError(context, err, details = {}){
+	const span = context.opentracing.span;
+	span.setTag("error",true);
+	span.log({'event': 'error', 'error.object': err, 'message': err.message, 'stack': err.stack});
+	Object.keys(details).forEach((k) => span.setTag(k,details[k]));
 }
 
 module.exports = {
 	tracingInit,
-	traceRoot
+	traceRoot,
+	traceError
 };
