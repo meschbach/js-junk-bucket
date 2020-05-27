@@ -25,7 +25,7 @@ function tracingInit( tracer, context ) {
 
 	patchContext({ parent: {}, subcontext: context });
 
-	context.onCleanup(futureCompletion((cb) => {
+	context.onCleanup(() => futureCompletion((cb) => {
 		tracer.close(cb);
 	}));
 }
