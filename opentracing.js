@@ -7,7 +7,7 @@ async function futureCompletion( fn ) {
 }
 
 function tracingInit( tracer, context ) {
-	const patchContext = ( { parent, subcontext } ) => {
+	const patchContext = ( { name, parent, subcontext } ) => {
 		subcontext.on("subcontext", patchContext);
 		subcontext.opentracing = {
 			tracer
@@ -15,7 +15,7 @@ function tracingInit( tracer, context ) {
 
 		const parentSpan = (parent.opentracing || {}).span;
 		if( parentSpan ) {
-			const childSpan = tracer.startSpan(subcontext.name, { childOf: parentSpan });
+			const childSpan = tracer.startSpan(name, { childOf: parentSpan });
 			subcontext.opentracing.span = childSpan;
 			subcontext.onCleanup(() => {
 				childSpan.finish();
