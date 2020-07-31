@@ -13,11 +13,11 @@
   "devDependencies": {
     "chai": "4",
     "chai-string": "1",
-    "coveralls": "3.0.9",
+    "coveralls": "3.1",
     "express": "4.17.1",
-    "mocha": "7.1.1",
+    "mocha": "8.1",
     "nano": "8.2.2",
-    "nyc": "14.1.1"
+    "nyc": "15.1.0"
   },
   "repository": "meschbach/js-junk-bucket"
 }
