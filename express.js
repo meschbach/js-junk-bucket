@@ -1,14 +1,15 @@
 const {nope} = require("./index");
 const express = require("express");
+const {traceErrorSpan} = require("./opentracing");
 
 /**
  * Adapts the standard ExpressJS calling convention to properly handle promises and properly documenting failure.  This
  * will also attach additional common response codes to the response.
  *
- * @callback future a asyncrhonous function which is either resolves or errors.
+ * @callback futureGenerator a asyncrhonous function which is either resolves or errors.
  * @return {Function} an Express handler which will properly manage async futures.
  */
-function async_handler( future, logger ) {
+function async_handler( futureGenerator, logger ) {
 	return function( req, resp ) {
 		standard_responses( resp );
 
@@ -17,13 +18,17 @@ function async_handler( future, logger ) {
 				logger.error("Error occurred after headers sent.  Terminating response", problem );
 				resp.end();
 			} else {
+				const span = ((req.context || {}).opentracing || {}).span;
+				if( span ) {
+					traceErrorSpan(span, problem);
+				}
 				logger.error("Failed to properly process request", problem );
 				resp.server_error("An unexpected condition occurred.");
 			}
 		}
 
 		try {
-			const result = future(req, resp);
+			const result = futureGenerator(req, resp);
 			Promise.resolve(result).then(nope, log_error )
 		}catch (e) {
 			log_error(e);
@@ -35,6 +40,7 @@ function async_handler( future, logger ) {
  * Attaches convience methods to an express router to gracefully handle asyncrhonous resource routing
  *
  * @param router the router to be enhanced
+ * @param logger to use if the request is missing a context
  * @return {*} the router
  */
 function express_async( router, logger = console ){

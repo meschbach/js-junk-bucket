@@ -40,15 +40,38 @@ function traceRoot( context, name ){
 	return span;
 }
 
+/**
+ * Logs an error against the traced context in the standard OepnTracing format.
+ *
+ * @param context {Context} context to log too
+ * @param err {Error} the error to be logged
+ * @param details {any} any additional details to be added to the trace.
+ */
 function traceError(context, err, details = {}){
 	const span = context.opentracing.span;
+	traceErrorSpan(span, err, details)
+}
+
+/**
+ * Logs the given Error in the standard format for OpenTracing
+ *
+ * @param span {Span} OpenTracing span to record against
+ * @param err {Error} error to be logged
+ * @param details {any} additional fields to be logged
+ */
+function traceErrorSpan( span, err, details = {} ) {
 	span.setTag("error",true);
-	span.log({'event': 'error', 'error.object': err, 'message': err.message, 'stack': err.stack});
-	Object.keys(details).forEach((k) => span.setTag(k,details[k]));
+	span.log(Object.assign({
+		'event': 'error',
+		'error.object': err,
+		'message': err.message,
+		'stack': err.stack
+	}, details));
 }
 
 module.exports = {
 	tracingInit,
 	traceRoot,
-	traceError
+	traceError,
+	traceErrorSpan
 };
