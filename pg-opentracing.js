@@ -1,8 +1,9 @@
-const {globalTracer, initGlobalTracer} = require("opentracing");
+const {globalTracer} = require("opentracing");
+const {traceErrorSpan} = require("./opentracing");
 const pg = require("pg");
 
 /**
- * Wraps a Postgres pool to add tracing to a Postgres connection pool
+ * An API compatible implementation of the pg.Connection interface.  Well, might eventually become fully compatible.
  */
 class TracedDB {
 	constructor( db, parentSpan, tags, config = {} ){
@@ -19,11 +20,13 @@ class TracedDB {
 		});
 		try {
 			const resultSet = await this.db.query(query, params);
+			querySpan.log({event: 'query.result', rowCount: resultSet.rowCount});
 			return resultSet;
 		}catch(e){
-			querySpan.log(e.message);
-			querySpan.setTag("error", true);
-			querySpan.setTag("sampling.priority", 1);
+			traceErrorSpan(querySpan, e);
+
+			// TODO: Probably should be a special subclass of Error
+			// pg library will lose stack trace, patch it in.
 			const error =  new Error(e.message + " in query '"+ query + "'");
 			error.cause = e;
 			error.originalStack = e.stack;
@@ -39,10 +42,16 @@ class TracedDB {
 
 	async parallelQueries( name, queries ){ //TODO: Doesn't actually conform to `pg` library.  Is this the correct place?
 		const encapsulatingSpan = this.tracer.startSpan( name, {childOf: this.parentSpan });
-		const results = await parallel( queries.map( async (q) => {
-			return await this._query(encapsulatingSpan, q.query, q.params );
-		}) );
-		encapsulatingSpan.finish();
+		try {
+			const results = await parallel(queries.map(async (q) => {
+				return await this._query(encapsulatingSpan, q.query, q.params);
+			}));
+		}catch(e){
+			traceErrorSpan(encapsulatingSpan, e);
+			throw e;
+		}finally {
+			encapsulatingSpan.finish();
+		}
 		return results;
 	}
 

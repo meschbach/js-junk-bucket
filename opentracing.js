@@ -61,6 +61,7 @@ function traceError(context, err, details = {}){
  */
 function traceErrorSpan( span, err, details = {} ) {
 	span.setTag("error",true);
+	span.setTag("sampling.priority", 1);
 	span.log(Object.assign({
 		'event': 'error',
 		'error.object': err,
