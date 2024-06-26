@@ -19,5 +19,6 @@
     "nano": "8.2.2",
     "nyc": "15.1.0"
   },
+  "types": "*.d.ts",
   "repository": "meschbach/js-junk-bucket"
 }
