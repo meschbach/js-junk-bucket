@@ -1,5 +1,10 @@
 declare module "junk-bucket/future" {
   export class Future<T> {
+    /**
+     * resolved indicates the promise has been resolved.  Used for correctness internally.  Could be used to construct
+     * gates.
+     */
+    public readonly resolved: boolean;
     public promised: Promise<T>;
 
     constructor();
@@ -9,6 +14,10 @@ declare module "junk-bucket/future" {
     public reject(value: any): void;
   }
 
+  /**
+   * Provides a future which will be resolved after ms .  Caveat on all browser setTimeout/setInterval issues.
+   * @param ms number of milliseconds to delay
+   */
   export function delay(ms: number): Future<void>;
 
   interface EventHandler {
