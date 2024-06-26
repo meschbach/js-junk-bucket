@@ -48,7 +48,7 @@ jobs:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
-      - run: "npm version $(echo ${{ steps.version.outputs.tag }} | sed 's/v//g)"
+      - run: "npm version $(echo ${{ steps.version.outputs.tag }} | sed 's/v//g')"
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
