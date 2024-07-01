@@ -17,8 +17,9 @@ declare module "junk-bucket/future" {
   /**
    * Provides a future which will be resolved after ms .  Caveat on all browser setTimeout/setInterval issues.
    * @param ms number of milliseconds to delay
+   * @param value the value to be returned after the delay
    */
-  export function delay(ms: number): Future<void>;
+  export function delay<T>(ms: number, value:T): Promise<T>;
 
   interface EventHandler {
     (event: any): void
