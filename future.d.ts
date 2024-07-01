@@ -19,7 +19,7 @@ declare module "junk-bucket/future" {
    * @param ms number of milliseconds to delay
    * @param value the value to be returned after the delay
    */
-  export function delay<T>(ms: number, value:T): Promise<T>;
+  export function delay<T>(ms: number, value?:T): Promise<T>;
 
   interface EventHandler {
     (event: any): void
