@@ -2,13 +2,16 @@
 /**
  * An adapter from the standard (error, result) NodeJS callback style.
  *
+ * At this point you should probably prefer to use the builtin node promises for the callbacks.  Still useful for
+ * wrapping external libraries who do not yet have callbacks.
+ *
  * @callback perform Accepts a callback to interpret the success/callback of the NodeJS style
  * @returns a promise to be resolved when the callback passed to perform function resolves.
  */
 function es6_node( perform ) {
 	return new Promise( ( accept, reject ) => {
 		try {
-			perform( ( error, result ) => { 
+			perform( ( error, result ) => {
 				if( error ) {
 					reject( error )
 				} else {
